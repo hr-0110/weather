@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="기상청 공공데이터 실시간 날씨 API 연동 및 선형회귀 여름철 체감온도 자동 예측">
+  <title>우리동네 실시간 체감온도 자동 예측</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="container">
+    <header class="app-header">
+      <h1><span id="headerEmoji">☀️</span> 우리동네 실시간 체감온도</h1>
+      <p class="description">
+        기상청 초단기실황 API에서 진짜 날씨 데이터를 받아와 선형회귀 모델로 체감온도를 자동 계산합니다.
+      </p>
+    </header>
+
+    <!-- 체감온도 결과 카드 -->
+    <section class="result-card" id="resultCard">
+      <div class="result-header">
+        <span class="status-badge" id="statusBadge">로딩 중...</span>
+      </div>
+      <div class="temp-display">
+        <span class="temp-value" id="apparentTempValue">--.-</span>
+        <span class="temp-unit">°C</span>
+      </div>
+      <p class="status-desc" id="statusDesc">기상청 실시간 데이터를 조회하고 있습니다.</p>
+      <div class="obs-time" id="obsTime">관측 시간: --:--</div>
+    </section>
+
+    <!-- 실시간 기상 관측 정보 카드 -->
+    <section class="weather-info-card">
+      <div class="card-title">
+        <h2>📍 기상청 실시간 관측 데이터</h2>
+        <button id="refreshBtn" class="refresh-btn" title="날씨 정보 새로고침">🔄 새로고침</button>
+      </div>
+
+      <div class="weather-grid">
+        <!-- 기온 정보 -->
+        <div class="info-item">
+          <span class="info-icon">🌡️</span>
+          <div class="info-content">
+            <span class="info-label">현재 기온</span>
+            <span class="info-value"><strong id="realTemp">--.-</strong> °C</span>
+          </div>
+        </div>
+
+        <!-- 습도 정보 -->
+        <div class="info-item">
+          <span class="info-icon">💧</span>
+          <div class="info-content">
+            <span class="info-label">상대 습도</span>
+            <span class="info-value"><strong id="realHumidity">--</strong> %</span>
+          </div>
+        </div>
+
+        <!-- 풍속 정보 -->
+        <div class="info-item">
+          <span class="info-icon">🍃</span>
+          <div class="info-content">
+            <span class="info-label">현재 풍속</span>
+            <span class="info-value"><strong id="realWind">--.-</strong> m/s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 모드 전환 (자동 위치 / 기본 위치) 안내 -->
+      <div class="location-info" id="locationInfo">
+        위치 권한을 확인 중입니다...
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+/* 기본 디자인 변수 설정 */
+:root {
+  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  
+  /* 기본 카드 배경 및 텍스트 */
+  --card-bg: rgba(255, 255, 255, 0.22);
+  --card-border: rgba(255, 255, 255, 0.35);
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.85);
+  
+  /* 체감온도 위험도별 색상 변수 */
+  --theme-safe: #10b981;      /* 안전 (초록) */
+  --theme-caution: #fcd34d;   /* 관심/주의 (선명한 노랑) */
+  --theme-warning: #f97316;   /* 경고 (짙은 주황) */
+  --theme-danger: #ef4444;    /* 위험 (빨강) */
+  --theme-extreme: #b91c1c;   /* 극심한 위험 (짙은 빨강) */
+
+  --current-theme: var(--theme-caution);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  transition: background 1s ease-in-out;
+  position: relative;
+  background-attachment: fixed;
+}
+
+/* =========================================================
+   시간대별 동적 배경 테마 (제시된 사진 색감 적용)
+   ========================================================= */
+
+/* 1. 일출 / 일몰 테마 (06시~08시 / 18시~20시) - 두 번째 노을 사진 색감 */
+body.theme-sunrise {
+  /* 상단 하늘빛 푸른 그레이 -> 중앙 황금빛 햇살 -> 하단 붉은 노을 */
+  background: linear-gradient(180deg, #4a6d8c 0%, #fbbf24 45%, #f97316 75%, #c2410c 100%);
+  background-attachment: fixed;
+  --card-bg: rgba(255, 251, 235, 0.25);
+  --card-border: rgba(255, 255, 255, 0.45);
+}
+
+/* 2. 낮 테마 (08시~18시) - 첫 번째 맑은 파란 하늘 사진 색감 */
+body.theme-day {
+  /* 상단 딥 블루 -> 중앙 선명한 하늘색 -> 하단 연한 파랑 */
+  background: linear-gradient(180deg, #1d62ca 0%, #3b82f6 50%, #60a5fa 100%);
+  background-attachment: fixed;
+  --card-bg: rgba(255, 255, 255, 0.25);
+  --card-border: rgba(255, 255, 255, 0.45);
+}
+
+/* 3. 밤/새벽 테마 (20시~06시) - 첫 번째 밤하늘 사진 색감 */
+body.theme-night {
+  /* 상단 딥 밤하늘 네이비 -> 하단 새벽녘 소프트 네이비/그레이 */
+  background: linear-gradient(180deg, #071026 0%, #0f1c3f 50%, #2a3952 100%);
+  background-attachment: fixed;
+  --card-bg: rgba(255, 255, 255, 0.15);
+  --card-border: rgba(255, 255, 255, 0.25);
+}
+
+/* 밤 테마 별빛 반짝임 효과 */
+body.theme-night::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50px 80px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 110px 45px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 170px 130px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 240px 200px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2.5px 2.5px at 290px 90px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 320px 320px;
+  opacity: 0.75;
+  pointer-events: none;
+  animation: starsTwinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes starsTwinkle {
+  0% { opacity: 0.4; }
+  100% { opacity: 0.9; }
+}
+
+/* 컨테이너 */
+.container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1;
+}
+
+.app-header {
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.app-header h1 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* 체감온도 결과 카드 (배경 연동 Glassmorphism) */
+.result-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 30px 20px 22px 20px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  transition: background 0.5s ease, border-color 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background-color: var(--current-theme);
+  transition: background-color 0.4s ease;
+}
+
+.result-header {
+  margin-bottom: 12px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.temp-display {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.temp-value {
+  font-size: 4.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.temp-unit {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.status-desc {
+  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  margin-bottom: 12px;
+}
+
+.obs-time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* 기상 정보 카드 */
+.weather-info-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.refresh-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--card-border);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.info-item {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.info-icon {
+  font-size: 1.4rem;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.info-value {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.info-value strong {
+  font-size: 1.15rem;
+  color: #ffffff;
+}
+
+.location-info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
